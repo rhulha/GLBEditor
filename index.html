@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>My first three.js app</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script>
+    function toggleSubmenu(id) {
+      var submenu = document.getElementById(id);
+      if (submenu.style.display === 'block') {
+        submenu.style.display = 'none';
+      } else {
+        submenu.style.display = 'block';
+      }
+
+      var submenus = document.getElementsByClassName('submenu');
+      for (var i = 0; i < submenus.length; i++) {
+        var openSubmenu = submenus[i];
+        if (openSubmenu !== submenu && openSubmenu.style.display === 'block') {
+          openSubmenu.style.display = 'none';
+        }
+      }
+    }
+
+    // Close submenus when clicking outside
+    window.onclick = function (event) {
+      if (!event.target.matches('.menu-item') && !event.target.matches('.submenu-item')) {
+        Array.from(document.getElementsByClassName('submenu')).forEach(submenu => {
+          submenu.style.display = 'none';
+        });
+      }
+    }
+  </script>
+</head>
+
+<body>
+
+  <div class="menu-bar">
+    <div class="menu-item" onclick="toggleSubmenu('fileSubmenu')">File
+      <div id="fileSubmenu" class="submenu">
+        <div class="submenu-item" id="newMenu">New</div>
+        <div class="submenu-item" id="openMenu">Open</div>
+        <div class="submenu-item">Save</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleSubmenu('editSubmenu')">Edit
+      <div id="editSubmenu" class="submenu">
+        <div class="submenu-item">Undo</div>
+        <div class="submenu-item">Redo</div>
+        <div class="submenu-item">Cut</div>
+        <div class="submenu-item">Copy</div>
+        <div class="submenu-item">Paste</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleSubmenu('helpSubmenu')">Help
+      <div id="helpSubmenu" class="submenu">
+        <div class="submenu-item">Documentation</div>
+        <div class="submenu-item">About</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="fileDisplay">
+    <span id="fileName">No file loaded</span>
+  </div>
+
+  <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.1/examples/jsm/"
+        }
+      }
+    </script>
+
+  <script type="module" src="main.js">
+
+
+  </script>
+</body>
+
+</html>
