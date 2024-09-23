@@ -6,8 +6,6 @@ import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-let global_file_list = [];
-let global_index = 0;
 let global_threed_file_ref = null;
 
 const scene = new THREE.Scene();
@@ -81,13 +79,12 @@ function onMouseClick(event) {
 
     if (intersects.length > 0) {
         const selectedObject = intersects[0].object;
-        // Highlight selected object (e.g., change material color)
-        // create new material
-        const material = new THREE.MeshStandardMaterial({
-            color: 0xff0000
-        });
-        selectedObject.material = material;
         console.log('Selected object:', selectedObject);
+
+        updateObjectDetails(selectedObject);
+
+        highlightObject(selectedObject);
+
     }
 }
 
@@ -124,7 +121,7 @@ function loadModel(name) {
         }
         threed_file.traverse(function (child) {
             if (child instanceof THREE.Mesh) {
-                child.material = goldMaterial;
+                //child.material = goldMaterial;
                 //child.material.flatShading = false;
             }
         });
@@ -155,6 +152,7 @@ function createSceneGraphElement(object, parentElement) {
 
     element.addEventListener('click', () => {
         highlightObject(object);
+        updateObjectDetails(object);
     });
 
     if (object.children.length > 0) {
@@ -176,6 +174,9 @@ function highlightObject(object) {
         }
     });
 
+    // const material = new THREE.MeshStandardMaterial({        color: 0xff0000    });
+    // selectedObject.material = material;
+
     // Highlight the selected object
     if (object.material) {
         object.material = object.material.clone();
@@ -188,5 +189,57 @@ function updateSceneGraph() {
     const sceneGraphContainer = document.getElementById('scene-graph');
     sceneGraphContainer.innerHTML = ''; // Clear previous content
     createSceneGraphElement(scene, sceneGraphContainer);
+}
+
+function updateObjectDetails(object) {
+
+    const geometry = object.geometry;
+
+    // Calculate face count
+    let faceCount = 0;
+    if (geometry && geometry.faces) {
+        faceCount = geometry.faces.length;
+    } else if (geometry && geometry.index) {
+        faceCount = geometry.index.count / 3;
+    } else if (geometry && geometry.attributes && geometry.attributes.position) {
+        faceCount = geometry.attributes.position.count / 3;
+    }
+
+    const detailsElement = document.getElementById('object-details');
+    if (object) {
+        detailsElement.innerHTML = `
+            <strong>Name:</strong> ${object.name}<br>
+            <strong>Type:</strong> ${object.type}<br>
+            <strong>Position:</strong> ${object.position.x}, ${object.position.y}, ${object.position.z}<br>
+            <strong>Rotation:</strong> ${object.rotation.x}, ${object.rotation.y}, ${object.rotation.z}<br>
+            <strong>Scale:</strong> ${object.scale.x}, ${object.scale.y}, ${object.scale.z}<br>
+            <strong>Face count:</strong> ${faceCount}<br>
+
+        `;
+    } else {
+        detailsElement.innerHTML = 'Select an object to see details';
+    }
+}
+
+function invertNormals(object) {
+    const geometry = object.geometry;
+    if (geometry && geometry.faces) {
+        // For non-indexed geometry
+        geometry.faces.forEach(face => {
+            const temp = face.b;
+            face.b = face.c;
+            face.c = temp;
+        });
+        geometry.normalsNeedUpdate = true;
+    } else if (geometry && geometry.index) {
+        // For indexed geometry
+        const indices = geometry.index.array;
+        for (let i = 0; i < indices.length; i += 3) {
+            const temp = indices[i + 1];
+            indices[i + 1] = indices[i + 2];
+            indices[i + 2] = temp;
+        }
+        geometry.index.needsUpdate = true;
+    }
 }
 

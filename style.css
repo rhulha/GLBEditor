@@ -1,83 +1,102 @@
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #000000;
-    overflow: hidden;
-  }
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  overflow: hidden;
+}
 
-  canvas {
-    display: block;
-  }
+canvas {
+  display: block;
+}
 
-  #buttonContainer {
-    position: absolute;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-  }
+#buttonContainer {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
 
-  button {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
-  }
+button {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
 
-  #fileDisplay {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    font-size: 18px;
-    color: white;
-    text-shadow: 2px 2px 4px black;
-    z-index: 1;
-  }
+#fileDisplay {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 18px;
+  color: white;
+  text-shadow: 2px 2px 4px black;
+  z-index: 1;
+}
 
-  .menu-bar {
-    display: flex;
-    background-color: #f1f1f1;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-  }
+.menu-bar {
+  display: flex;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
 
-  .menu-bar .menu-item {
-    margin-right: 20px;
-    cursor: pointer;
-  }
+.menu-bar .menu-item {
+  margin-right: 20px;
+  cursor: pointer;
+}
 
-  .submenu {
-    display: none;
-    position: absolute;
-    top: 20;
-    left: 0;
-    background-color: #f1f1f1;
+.submenu {
+  display: none;
+  position: absolute;
+  top: 20;
+  left: 0;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  z-index: 1;
+}
+
+.submenu .submenu-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.submenu .submenu-item:hover {
+  background-color: #ddd;
+}
+
+#scene-graph {
+  position: fixed;
+  left: 20px;
+  top: 100px;
+  width: 200px;
+  height: 80%;
+  overflow-y: auto;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-right: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#object-info {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    width: 300px;
+    height: 80%;
+    background-color: white;
     border: 1px solid #ccc;
-    z-index: 1;
-  }
-
-  .submenu .submenu-item {
     padding: 10px;
-    cursor: pointer;
-  }
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
 
-  .submenu .submenu-item:hover {
-    background-color: #ddd;
-  }
-
-    #scene-graph {
-      position: fixed;
-      left: 20px;
-      top: 100px;
-      width: 200px;
-      height: 80%;
-      overflow-y: auto;
-      background-color: rgba(255, 255, 255, 0.8);
-      border-right: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 10px;
-  }
+#object-info h2 {
+    margin-top: 0;
+}
