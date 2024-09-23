@@ -53,11 +53,9 @@ function openMenu() {
     input.accept = '.glb,.fbx,.3dm';
     input.onchange = (event) => {
         const file = event.target.files[0];
-        if(global_threed_file_ref)
+        if (global_threed_file_ref)
             scene.remove(global_threed_file_ref);
-
         fileNameElement.textContent = file.name;
-
         if (file) {
             const url = URL.createObjectURL(file);
             console.log(url);
@@ -66,10 +64,33 @@ function openMenu() {
         }
     };
     input.click();
-
-
-
 }
+
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener('click', onMouseClick, false);
+
+function onMouseClick(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    if (intersects.length > 0) {
+        const selectedObject = intersects[0].object;
+        // Highlight selected object (e.g., change material color)
+        // create new material
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xff0000
+        });
+        selectedObject.material = material;
+        console.log('Selected object:', selectedObject);
+    }
+}
+
 
 const fbx_loader = new FBXLoader();
 const rhino3dmLoader = new Rhino3dmLoader();
@@ -108,6 +129,7 @@ function loadModel(name) {
             }
         });
         scene.add(threed_file);
+        updateSceneGraph();
         global_threed_file_ref = threed_file;
     });
 
@@ -124,3 +146,47 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+
+function createSceneGraphElement(object, parentElement) {
+    const element = document.createElement('div');
+    element.textContent = object.name || object.type;
+    parentElement.appendChild(element);
+
+    element.addEventListener('click', () => {
+        highlightObject(object);
+    });
+
+    if (object.children.length > 0) {
+        const childrenContainer = document.createElement('div');
+        childrenContainer.style.marginLeft = '10px';
+        parentElement.appendChild(childrenContainer);
+
+        object.children.forEach(child => {
+            createSceneGraphElement(child, childrenContainer);
+        });
+    }
+}
+
+function highlightObject(object) {
+    // Reset previous highlights
+    scene.traverse(child => {
+        if (child.material) {
+            child.material.emissive.setHex(child.currentHex || 0x000000);
+        }
+    });
+
+    // Highlight the selected object
+    if (object.material) {
+        object.material = object.material.clone();
+        object.currentHex = object.material.emissive.getHex();
+        object.material.emissive.setHex(0xff0000); // Highlight color
+    }
+}
+
+function updateSceneGraph() {
+    const sceneGraphContainer = document.getElementById('scene-graph');
+    sceneGraphContainer.innerHTML = ''; // Clear previous content
+    createSceneGraphElement(scene, sceneGraphContainer);
+}
+
